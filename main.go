@@ -1,30 +1,51 @@
 package main
 
 import (
-	"go-postgres/db"
 	"go-postgres/db/models"
-	"log"
+	"go-postgres/handlers"
+	"net/http"
+	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/hashicorp/go-hclog"
+
+	gohandlers "github.com/gorilla/handlers"
 )
 
 func main() {
-	// create a new serve mux and register the handlers
-	//sm := mux.NewRouter()
+	l := hclog.Default()
+	co := models.DbCon{}
+	co.InitDB()
+
+	// create the handlers
+	ph := handlers.NewUsers(l, co)
+
+	//create a new serve mux and register the handlers
+	sm := mux.NewRouter()
 
 	// handlers for API
-	//getR := sm.Methods(http.MethodGet).Subrouter()
+	getR := sm.Methods(http.MethodGet).Subrouter()
+	getR.HandleFunc("/products", ph.getUser)
 
-	//ph := handlers.NewProducts(l, v, db)
 	//getR.HandleFunc("/products", ph.ListAll)
 	//getR.HandleFunc("/products", ph.ListAll).Queries("currency", "{[A-Z]{3}}")
 
-	db, err := db.InitDB()
-	if err != nil {
-		log.Panic(err)
+	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"http://localhost:3000"}))
+
+	// create a new server
+	s := http.Server{
+		Addr:         ":9090",                                          // configure the bind address
+		Handler:      ch(sm),                                           // set the default handler
+		ErrorLog:     l.StandardLogger(&hclog.StandardLoggerOptions{}), // set the logger for the server
+		ReadTimeout:  5 * time.Second,                                  // max time to read request from the client
+		WriteTimeout: 10 * time.Second,                                 // max time to write response to the client
+		IdleTimeout:  120 * time.Second,                                // max time for connections using TCP Keep-Alive
 	}
+	s.ListenAndServe()
+	// start the server
 
-	var p models.Credentials
-	db.QueryRow("select Username, Password WHERE productCode = ?").Scan(&p.Username, &p.Password)
-
-	print(p.Username)
+	co.DBClose()
 
 }
+
+// handlers for API

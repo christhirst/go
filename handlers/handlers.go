@@ -1,14 +1,11 @@
 package handlers
 
 import (
-	"encoding/json"
-	"go-postgres/db/models"
+	"fmt"
 	"net/http"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
-func Signup(w http.ResponseWriter, r *http.Request) {
+/* func Signup(w http.ResponseWriter, r *http.Request) {
 	// Parse and decode the request body into a new `Credentials` instance
 
 	creds := &models.Credentials{}
@@ -29,4 +26,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// We reach this point if the credentials we correctly stored in the database, and the default status of 200 is sent back
+} */
+
+func (u *Users) LoginUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Authenticate and login the user...")
 }

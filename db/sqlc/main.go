@@ -7,7 +7,11 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 )
 
-func InitDB() (*sql.DB, error) {
+type DbCon struct {
+	DB *sql.DB
+}
+
+func (d *DbCon) InitDB() (*sql.DB, error) {
 
 	const (
 		host     = "uxti.de"
@@ -35,4 +39,8 @@ func InitDB() (*sql.DB, error) {
 
 	fmt.Println("Successfully connected!")
 	return db, nil
+}
+
+func (d *DbCon) DBClose() {
+	defer d.DB.Close()
 }

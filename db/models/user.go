@@ -1,11 +1,17 @@
 package models
 
-type Credentials struct {
-	Username string `json:"username", db:"username"`
-	password string `json:"password", db:"password"`
+import (
+	"encoding/json"
+	"io"
+)
+
+func (a *Account) FromJSON(r io.Reader) error {
+	e := json.NewDecoder(r)
+	return e.Decode()
 }
 
-type UserRepository interface {
-	//FindByID(ID int) (*User, error)
-	//Save(user *User) error
+func (a *Account) ToJSON(w io.Writer) error {
+	e := json.NewEncoder(w)
+	return e.Encode(a)
+
 }

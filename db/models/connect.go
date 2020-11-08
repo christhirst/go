@@ -1,4 +1,4 @@
-package db
+package models
 
 import (
 	"database/sql"
@@ -7,7 +7,11 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 )
 
-func InitDB() (*sql.DB, error) {
+type DbCon struct {
+	DB *sql.DB
+}
+
+func (d *DbCon) InitDBs() {
 
 	const (
 		host     = "uxti.de"
@@ -20,19 +24,20 @@ func InitDB() (*sql.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-	db, err := sql.Open("pgx", psqlInfo)
+	var err error
+	d.DB, err = sql.Open("pgx", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
-	testQueries := New(db)
 
-	defer db.Close()
-
-	err = db.Ping()
+	err = d.DB.Ping()
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Println("Successfully connected!")
-	return db, nil
+
+}
+func (d *DbCon) DBClose() {
+	defer d.DB.Close()
 }
