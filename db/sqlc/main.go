@@ -28,17 +28,14 @@ func (d *DbCon) InitDB() (*sql.DB, error) {
 	if err != nil {
 		panic(err)
 	}
-	testQueries := New(db)
-	println(testQueries)
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
 		panic(err)
 	}
-
 	fmt.Println("Successfully connected!")
-	return db, nil
+	d.DB = db
+	return db, err
 }
 
 func (d *DbCon) DBClose() {

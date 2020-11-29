@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go-postgres/db/models"
+	db "go-postgres/db/sqlc"
 	"go-postgres/handlers"
 	"net/http"
 	"time"
@@ -14,9 +14,8 @@ import (
 
 func main() {
 	l := hclog.Default()
-	co := models.DbCon{}
+	co := db.DbCon{}
 	co.InitDB()
-
 	// create the handlers
 	ph := handlers.NewUsers(l, co)
 
@@ -25,7 +24,11 @@ func main() {
 
 	// handlers for API
 	getR := sm.Methods(http.MethodGet).Subrouter()
-	getR.HandleFunc("/products", ph.getUser)
+
+	getR.HandleFunc("/products", ph.GetUsers)
+
+	postR := sm.Methods(http.MethodPost).Subrouter()
+	postR.HandleFunc("/product", ph.AddUser)
 
 	//getR.HandleFunc("/products", ph.ListAll)
 	//getR.HandleFunc("/products", ph.ListAll).Queries("currency", "{[A-Z]{3}}")
