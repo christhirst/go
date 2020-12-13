@@ -15,4 +15,15 @@ test:
 	go test -v -cover ./...
 
 
+.PHONY: protos
+
+protos:
+	protoc -I proto/ proto/*.proto --go_out=plugins=grpc:proto/user
+
+clean:
+	rm proto/user/*.go
+
+run:
+	go run main.go
+
 .PHONY: sqlc migrateup migratedown

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package uxti.de;
+option go_package ="pb";
+
+
+// RateResponse is the response from a GetRate call, it contains
+// rate which is a floating point number and can be used to convert between the 
+// two currencies specified in the request.
+
+service LoginUser {
+    rpc GetUser(UserRequest) returns (DataResponse);
+}
+
+message UserRequest {
+    string UserName = 1;
+    string UserPW = 2;
+}
+
+
+message DataResponse {
+    string  user = 1;
+    uint32 id = 2;
+}
+
+
