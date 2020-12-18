@@ -28,7 +28,7 @@ func main() {
 	//create a new serve mux and register the handlers
 	sm := mux.NewRouter()
 
-	// handlers for API
+	// handlers for API s
 	getR := sm.Methods(http.MethodGet).Subrouter()
 
 	getR.HandleFunc("/products", ph.GetUsers)
