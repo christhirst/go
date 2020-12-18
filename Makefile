@@ -16,7 +16,7 @@ test:
 
 
 .PHONY: protos
-
+.PHONY: protos
 protos:
 	protoc -I proto/ proto/*.proto --go_out=plugins=grpc:proto/user
 
