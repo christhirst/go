@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	db "go-postgres/db/sqlc"
 	"net/http"
@@ -34,7 +35,9 @@ func (u *Users) GetUser(rw http.ResponseWriter, r *http.Request) {
 
 	us, _ := Query.GetAccount(context.Background(), "cshzxd")
 	println(us.Username)
-
+	rw.Header().Set("Content-Type", "application/json")
+	js, _ := json.Marshal([]string{"chicago", "moscow", "munich", "milan"})
+	rw.Write(js)
 }
 
 func (u *Users) AddUser(rw http.ResponseWriter, r *http.Request) {
