@@ -11,7 +11,7 @@ import (
 
 const (
 	dbDriver = "pgx"
-	dbSource = "postgresql://postgres:postmoskwadb@uxti.de:5432/userdb?sslmode=disable"
+	dbSource = "postgres://postgres:UXTIm0skwadb@db.eymsuwhltijnfrbplqgx.supabase.co:5432/postgres?sslmode=disable"
 )
 
 var testQueries *Queries

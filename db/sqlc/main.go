@@ -14,10 +14,10 @@ type DbCon struct {
 func (d *DbCon) InitDB() (*sql.DB, error) {
 
 	const (
-		host     = "uxti.de"
+		host     = "db.eymsuwhltijnfrbplqgx.supabase.co" //"uxti.de"
 		port     = 5432
 		user     = "postgres"
-		password = "postmoskwadb"
+		password = "UXTIm0skwadb"
 		dbname   = "userdb"
 	)
 

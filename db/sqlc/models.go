@@ -2,7 +2,22 @@
 
 package db
 
+import (
+	"database/sql"
+)
+
 type Account struct {
+	UserID   string `json:"user_id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type Demand struct {
+	ID          string         `json:"id"`
+	Title       string         `json:"title"`
+	Description sql.NullString `json:"description"`
+	Url         sql.NullString `json:"url"`
+	Price       sql.NullString `json:"price"`
+	Isdone      sql.NullString `json:"isdone"`
+	Owner       sql.NullString `json:"owner"`
 }

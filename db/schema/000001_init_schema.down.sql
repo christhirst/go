@@ -1,2 +1,3 @@
+DROP TABLE IF EXISTS demands;
 DROP TABLE IF EXISTS accounts;
 

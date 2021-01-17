@@ -11,6 +11,7 @@ import (
 
 func createRandomAccount(t *testing.T) Account {
 	arg := CreateAccountParams{
+		UserID:   util.RandomString(4),
 		Username: util.RandomUser(),
 		Password: util.RandomString(4),
 	}
@@ -28,19 +29,7 @@ func createRandomAccount(t *testing.T) Account {
 }
 
 func TestCreateAccount(t *testing.T) {
-	arg := CreateAccountParams{
-		Username: util.RandomUser(),
-		Password: util.RandomString(4),
-	}
-	account, err := testQueries.CreateAccount(context.Background(), arg)
-	require.NoError(t, err)
-	require.NotEmpty(t, account)
-
-	require.Equal(t, arg.Username, account.Username)
-	require.Equal(t, arg.Password, account.Password)
-
-	require.NotZero(t, account.Username)
-
+	createRandomAccount(t)
 }
 
 func TestGetAccount(t *testing.T) {

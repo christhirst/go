@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	db "go-postgres/db/sqlc"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/hashicorp/go-hclog"
@@ -31,8 +32,9 @@ func (u *Users) GetUsers(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (u *Users) GetUser(rw http.ResponseWriter, r *http.Request) {
+	body, _ := ioutil.ReadAll(r.Body)
 	Query := db.New(u.userDB.DB)
-
+	print(string(body))
 	us, _ := Query.GetAccount(context.Background(), "cshzxd")
 	println(us.Username)
 	rw.Header().Set("Content-Type", "application/json")
@@ -57,6 +59,9 @@ func (u *Users) AddUser(rw http.ResponseWriter, r *http.Request) {
 	Query.CreateAccount(context.Background(), arg)
 
 }
+
+
+
 func (u *Users) deleteUser(rw http.ResponseWriter, r *http.Request) {
 	Query := db.New(u.userDB.DB)
 	Query.GetAccount(context.Background(), "cshzxd")

@@ -9,20 +9,21 @@ import (
 
 const createAccount = `-- name: CreateAccount :one
 INSERT INTO
-    accounts (username, password)
+    accounts (user_id, username, password)
 VALUES
-    ($1, $2) RETURNING username, password
+    ($1, $2, $3) RETURNING user_id, username, password
 `
 
 type CreateAccountParams struct {
+	UserID   string `json:"user_id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, createAccount, arg.Username, arg.Password)
+	row := q.db.QueryRowContext(ctx, createAccount, arg.UserID, arg.Username, arg.Password)
 	var i Account
-	err := row.Scan(&i.Username, &i.Password)
+	err := row.Scan(&i.UserID, &i.Username, &i.Password)
 	return i, err
 }
 
@@ -36,19 +37,19 @@ func (q *Queries) DeleteAccount(ctx context.Context, username string) error {
 }
 
 const getAccount = `-- name: GetAccount :one
-SELECT username, password FROM accounts
+SELECT user_id, username, password FROM accounts
 WHERE username = $1 LIMIT 1
 `
 
 func (q *Queries) GetAccount(ctx context.Context, username string) (Account, error) {
 	row := q.db.QueryRowContext(ctx, getAccount, username)
 	var i Account
-	err := row.Scan(&i.Username, &i.Password)
+	err := row.Scan(&i.UserID, &i.Username, &i.Password)
 	return i, err
 }
 
 const listAccounts = `-- name: ListAccounts :many
-SELECT username, password FROM accounts
+SELECT user_id, username, password FROM accounts
 ORDER BY username
 LIMIT $1
 OFFSET $2
@@ -68,7 +69,7 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 	var items []Account
 	for rows.Next() {
 		var i Account
-		if err := rows.Scan(&i.Username, &i.Password); err != nil {
+		if err := rows.Scan(&i.UserID, &i.Username, &i.Password); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -85,7 +86,7 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 const updateAccount = `-- name: UpdateAccount :one
 UPDATE accounts SET password = $2
 WHERE username = $1
-RETURNING username, password
+RETURNING user_id, username, password
 `
 
 type UpdateAccountParams struct {
@@ -96,6 +97,6 @@ type UpdateAccountParams struct {
 func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Account, error) {
 	row := q.db.QueryRowContext(ctx, updateAccount, arg.Username, arg.Password)
 	var i Account
-	err := row.Scan(&i.Username, &i.Password)
+	err := row.Scan(&i.UserID, &i.Username, &i.Password)
 	return i, err
 }
