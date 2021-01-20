@@ -1,3 +1,3 @@
-DROP TABLE IF EXISTS demands;
 DROP TABLE IF EXISTS accounts;
-
+DROP TABLE IF EXISTS demands;
+DROP TABLE IF EXISTS demands_transfer;

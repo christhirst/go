@@ -21,3 +21,10 @@ type Demand struct {
 	Isdone      sql.NullString `json:"isdone"`
 	Owner       sql.NullString `json:"owner"`
 }
+
+type DemandTransfer struct {
+	ID            string `json:"id"`
+	FromAccountID string `json:"from_account_id"`
+	ToAccountID   string `json:"to_account_id"`
+	DemandID      string `json:"demand_id"`
+}
