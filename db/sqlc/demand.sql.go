@@ -11,31 +11,29 @@ import (
 const createDemand = `-- name: CreateDemand :one
 INSERT INTO
     demands
-    (id, title, description, url, price, isDone, owner)
+    (title, description, url, price, isDone, account_id)
 VALUES
-    ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, title, description, url, price, isdone, owner
+    ($1, $2, $3, $4, $5, $6)
+RETURNING id, title, description, url, price, isdone, account_id
 `
 
 type CreateDemandParams struct {
-	ID          string         `json:"id"`
 	Title       string         `json:"title"`
 	Description sql.NullString `json:"description"`
 	Url         sql.NullString `json:"url"`
 	Price       sql.NullString `json:"price"`
 	Isdone      sql.NullString `json:"isdone"`
-	Owner       sql.NullString `json:"owner"`
+	AccountID   int64          `json:"account_id"`
 }
 
 func (q *Queries) CreateDemand(ctx context.Context, arg CreateDemandParams) (Demand, error) {
 	row := q.db.QueryRowContext(ctx, createDemand,
-		arg.ID,
 		arg.Title,
 		arg.Description,
 		arg.Url,
 		arg.Price,
 		arg.Isdone,
-		arg.Owner,
+		arg.AccountID,
 	)
 	var i Demand
 	err := row.Scan(
@@ -45,7 +43,7 @@ func (q *Queries) CreateDemand(ctx context.Context, arg CreateDemandParams) (Dem
 		&i.Url,
 		&i.Price,
 		&i.Isdone,
-		&i.Owner,
+		&i.AccountID,
 	)
 	return i, err
 }
@@ -54,13 +52,13 @@ const deleteDemand = `-- name: DeleteDemand :exec
 DELETE FROM demands WHERE id = $1
 `
 
-func (q *Queries) DeleteDemand(ctx context.Context, id string) error {
+func (q *Queries) DeleteDemand(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteDemand, id)
 	return err
 }
 
 const getDemand = `-- name: GetDemand :one
-SELECT id, title, description, url, price, isdone, owner
+SELECT id, title, description, url, price, isdone, account_id
 FROM demands
 WHERE title = $1
 LIMIT 1
@@ -76,13 +74,13 @@ func (q *Queries) GetDemand(ctx context.Context, title string) (Demand, error) {
 		&i.Url,
 		&i.Price,
 		&i.Isdone,
-		&i.Owner,
+		&i.AccountID,
 	)
 	return i, err
 }
 
 const listDemands = `-- name: ListDemands :many
-SELECT id, title, description, url, price, isdone, owner
+SELECT id, title, description, url, price, isdone, account_id
 FROM demands
 ORDER BY title
 LIMIT $1
@@ -111,7 +109,7 @@ func (q *Queries) ListDemands(ctx context.Context, arg ListDemandsParams) ([]Dem
 			&i.Url,
 			&i.Price,
 			&i.Isdone,
-			&i.Owner,
+			&i.AccountID,
 		); err != nil {
 			return nil, err
 		}
@@ -127,20 +125,20 @@ func (q *Queries) ListDemands(ctx context.Context, arg ListDemandsParams) ([]Dem
 }
 
 const updateDemand = `-- name: UpdateDemand :one
-UPDATE demands SET owner = $2, description
+UPDATE demands SET account_id = $2, description
 = $3
-WHERE title = $1
-RETURNING id, title, description, url, price, isdone, owner
+WHERE id = $1
+RETURNING id, title, description, url, price, isdone, account_id
 `
 
 type UpdateDemandParams struct {
-	Title       string         `json:"title"`
-	Owner       sql.NullString `json:"owner"`
+	ID          int64          `json:"id"`
+	AccountID   int64          `json:"account_id"`
 	Description sql.NullString `json:"description"`
 }
 
 func (q *Queries) UpdateDemand(ctx context.Context, arg UpdateDemandParams) (Demand, error) {
-	row := q.db.QueryRowContext(ctx, updateDemand, arg.Title, arg.Owner, arg.Description)
+	row := q.db.QueryRowContext(ctx, updateDemand, arg.ID, arg.AccountID, arg.Description)
 	var i Demand
 	err := row.Scan(
 		&i.ID,
@@ -149,7 +147,7 @@ func (q *Queries) UpdateDemand(ctx context.Context, arg UpdateDemandParams) (Dem
 		&i.Url,
 		&i.Price,
 		&i.Isdone,
-		&i.Owner,
+		&i.AccountID,
 	)
 	return i, err
 }

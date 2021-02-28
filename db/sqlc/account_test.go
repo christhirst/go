@@ -11,7 +11,6 @@ import (
 
 func createRandomAccount(t *testing.T) Account {
 	arg := CreateAccountParams{
-		UserID:   util.RandomString(4),
 		Username: util.RandomUser(),
 		Password: util.RandomString(4),
 	}

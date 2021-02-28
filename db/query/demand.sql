@@ -1,9 +1,9 @@
 -- name: CreateDemand :one
 INSERT INTO
     demands
-    (id, title, description, url, price, isDone, owner)
+    (title, description, url, price, isDone, account_id)
 VALUES
-    ($1, $2, $3, $4, $5, $6, $7)
+    ($1, $2, $3, $4, $5, $6)
 RETURNING *;
 
 
@@ -23,9 +23,9 @@ OFFSET
 $2;
 
 -- name: UpdateDemand :one
-UPDATE demands SET owner = $2, description
+UPDATE demands SET account_id = $2, description
 = $3
-WHERE title = $1
+WHERE id = $1
 RETURNING *;
 
 

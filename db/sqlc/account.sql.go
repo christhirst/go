@@ -9,19 +9,18 @@ import (
 
 const createAccount = `-- name: CreateAccount :one
 INSERT INTO
-    accounts (user_id, username, password)
+    accounts (username, password)
 VALUES
-    ($1, $2, $3) RETURNING user_id, username, password
+    ($1, $2) RETURNING user_id, username, password
 `
 
 type CreateAccountParams struct {
-	UserID   string `json:"user_id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, createAccount, arg.UserID, arg.Username, arg.Password)
+	row := q.db.QueryRowContext(ctx, createAccount, arg.Username, arg.Password)
 	var i Account
 	err := row.Scan(&i.UserID, &i.Username, &i.Password)
 	return i, err
@@ -43,6 +42,19 @@ WHERE username = $1 LIMIT 1
 
 func (q *Queries) GetAccount(ctx context.Context, username string) (Account, error) {
 	row := q.db.QueryRowContext(ctx, getAccount, username)
+	var i Account
+	err := row.Scan(&i.UserID, &i.Username, &i.Password)
+	return i, err
+}
+
+const getAccountForUpdates = `-- name: GetAccountForUpdates :one
+SELECT user_id, username, password FROM accounts
+WHERE username = $1 LIMIT 1
+FOR UPDATE
+`
+
+func (q *Queries) GetAccountForUpdates(ctx context.Context, username string) (Account, error) {
+	row := q.db.QueryRowContext(ctx, getAccountForUpdates, username)
 	var i Account
 	err := row.Scan(&i.UserID, &i.Username, &i.Password)
 	return i, err

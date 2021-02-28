@@ -18,9 +18,9 @@ INSERT INTO demand_transfer (
 `
 
 type CreateDemand_transferParams struct {
-	FromAccountID string `json:"from_account_id"`
-	ToAccountID   string `json:"to_account_id"`
-	DemandID      string `json:"demand_id"`
+	FromAccountID int64 `json:"from_account_id"`
+	ToAccountID   int64 `json:"to_account_id"`
+	DemandID      int64 `json:"demand_id"`
 }
 
 func (q *Queries) CreateDemand_transfer(ctx context.Context, arg CreateDemand_transferParams) (DemandTransfer, error) {
@@ -39,7 +39,7 @@ const deleteDemand_transfer = `-- name: DeleteDemand_transfer :exec
 DELETE FROM demand_transfer WHERE id = $1
 `
 
-func (q *Queries) DeleteDemand_transfer(ctx context.Context, id string) error {
+func (q *Queries) DeleteDemand_transfer(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteDemand_transfer, id)
 	return err
 }
@@ -49,7 +49,7 @@ SELECT id, from_account_id, to_account_id, demand_id FROM demand_transfer
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetDemand_transfer(ctx context.Context, id string) (DemandTransfer, error) {
+func (q *Queries) GetDemand_transfer(ctx context.Context, id int64) (DemandTransfer, error) {
 	row := q.db.QueryRowContext(ctx, getDemand_transfer, id)
 	var i DemandTransfer
 	err := row.Scan(
@@ -72,10 +72,10 @@ OFFSET $4
 `
 
 type ListDemand_transferParams struct {
-	FromAccountID string `json:"from_account_id"`
-	ToAccountID   string `json:"to_account_id"`
-	Limit         int32  `json:"limit"`
-	Offset        int32  `json:"offset"`
+	FromAccountID int64 `json:"from_account_id"`
+	ToAccountID   int64 `json:"to_account_id"`
+	Limit         int32 `json:"limit"`
+	Offset        int32 `json:"offset"`
 }
 
 func (q *Queries) ListDemand_transfer(ctx context.Context, arg ListDemand_transferParams) ([]DemandTransfer, error) {

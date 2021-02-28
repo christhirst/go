@@ -7,24 +7,24 @@ import (
 )
 
 type Account struct {
-	UserID   string `json:"user_id"`
+	UserID   int64  `json:"user_id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
 type Demand struct {
-	ID          string         `json:"id"`
+	ID          int64          `json:"id"`
 	Title       string         `json:"title"`
 	Description sql.NullString `json:"description"`
 	Url         sql.NullString `json:"url"`
 	Price       sql.NullString `json:"price"`
 	Isdone      sql.NullString `json:"isdone"`
-	Owner       sql.NullString `json:"owner"`
+	AccountID   int64          `json:"account_id"`
 }
 
 type DemandTransfer struct {
-	ID            string `json:"id"`
-	FromAccountID string `json:"from_account_id"`
-	ToAccountID   string `json:"to_account_id"`
-	DemandID      string `json:"demand_id"`
+	ID            int64 `json:"id"`
+	FromAccountID int64 `json:"from_account_id"`
+	ToAccountID   int64 `json:"to_account_id"`
+	DemandID      int64 `json:"demand_id"`
 }

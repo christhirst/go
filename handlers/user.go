@@ -42,25 +42,24 @@ func (u *Users) GetUser(rw http.ResponseWriter, r *http.Request) {
 	rw.Write(js)
 }
 
-func (u *Users) AddUser(rw http.ResponseWriter, r *http.Request) {
-	u.l.Info("Handle Post User")
+func (server *Server) AddUser(ctx context.Context, rw http.ResponseWriter, r *http.Request) {
+	var req db.Account
 
-	account := &db.Account{}
-	err := account.FromJSON(r.Body)
+	accounts := &db.Account{}
+	err := accounts.FromJSON(r.Body)
 	if err != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
 	}
 	arg := db.CreateAccountParams{
-		Username: account.Username,
-		Password: account.Password,
+		Username: req.Username,
+		Password: req.Password,
+	}
+	account, err := server.store.CreateAccount(ctx, arg)
+	if err != nil {
+		return
 	}
 
-	Query := db.New(u.userDB.DB)
-	Query.CreateAccount(context.Background(), arg)
-
 }
-
-
 
 func (u *Users) deleteUser(rw http.ResponseWriter, r *http.Request) {
 	Query := db.New(u.userDB.DB)

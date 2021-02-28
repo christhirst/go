@@ -1,6 +1,6 @@
 create table accounts
 (
-  user_id varchar PRIMARY KEY,
+  user_id bigserial PRIMARY KEY,
   username varchar NOT NULL,
   password varchar NOT NULL
 );
@@ -9,25 +9,25 @@ create table accounts
 
 create table demands
 (
-  id VARCHAR NOT NULL PRIMARY KEY,
+  id bigserial PRIMARY KEY,
   title varchar NOT NULL,
   description varchar,
   url varchar,
   price varchar,
   isDone varchar,
-  owner varchar
+  account_id bigint NOT NULL
 );
 
 
 create table demand_transfer
 (
-  id VARCHAR NOT NULL PRIMARY KEY,
-  from_account_id varchar NOT NULL,
-  to_account_id varchar NOT NULL,
-  demand_id varchar NOT NULL
+  id bigserial PRIMARY KEY,
+  from_account_id bigint NOT NULL,
+  to_account_id bigint NOT NULL,
+  demand_id bigint NOT NULL
 );
 
-ALTER TABLE "demands" ADD FOREIGN KEY ("owner") REFERENCES accounts ("user_id");
+ALTER TABLE "demands" ADD FOREIGN KEY ("account_id") REFERENCES accounts ("user_id");
 ALTER TABLE "demand_transfer" ADD FOREIGN KEY ("from_account_id") REFERENCES accounts ("user_id");
 ALTER TABLE "demand_transfer" ADD FOREIGN KEY ("to_account_id") REFERENCES accounts ("user_id");
 ALTER TABLE "demand_transfer" ADD FOREIGN KEY ("demand_id") REFERENCES demands ("id");

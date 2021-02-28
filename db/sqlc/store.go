@@ -41,22 +41,25 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 
 // TransferTxParams contains the input parameters of the transfer transaction
 type TransferTxParams struct {
-	FromAccountID string `json:"from_account_id"`
-	ToAccountID   string `json:"to_account_id"`
-	DemandID      string `json:"demand"`
+	FromAccountID int64 `json:"from_account_id"`
+	ToAccountID   int64 `json:"to_account_id"`
+	DemandID      int64 `json:"demand"`
 }
 
 type TransferTxResult struct {
 	DemandTransfer DemandTransfer `json:"demandTransfer"`
-	FromAccount    Account        `json:"from_account"`
-	ToAccount      Account        `json:"to_account"`
+	Demand         Demand         `json:"Demand"`
 }
+
+var txKEy = struct{}{}
 
 func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 
 	var result TransferTxResult
+
 	err := store.execTx(ctx, func(q *Queries) error {
 		var err error
+
 		result.DemandTransfer, err = q.CreateDemand_transfer(ctx, CreateDemand_transferParams{
 			FromAccountID: arg.FromAccountID,
 			ToAccountID:   arg.ToAccountID,
@@ -67,7 +70,16 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 			return err
 		}
 
+		result.Demand, err = q.UpdateDemand(ctx, UpdateDemandParams{
+			ID:        arg.DemandID,
+			AccountID: arg.ToAccountID,
+		})
+
+		if err != nil {
+			return err
+		}
 		return nil
+
 	})
 
 	return result, err
